@@ -5,23 +5,21 @@ import com.godzynskyi.ConnectionDTO;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * Created by JavaDeveloper on 22.07.2015.
- */
 public class CountOfUniqueRequestsObserver {
     private static Set<UniqueRequest> requests = new LinkedHashSet<>();
 
     public static synchronized void update(ConnectionDTO connection) {
-        UniqueRequest ur = new UniqueRequest(connection.getIp().getHostString(), connection.getUri());
+        UniqueRequest ur = new UniqueRequest(connection.getIp().split(":")[0], connection.getUri());
         requests.add(ur);
 
     }
 
-    public synchronized static int getCount() {
+    public static int getCount() {
         return requests.size();
     }
 
 }
+
 class UniqueRequest {
     private String ip;
     private String uri;
@@ -53,4 +51,3 @@ class UniqueRequest {
         return ip.hashCode() * 2 + uri.hashCode() * 3;
     }
 }
-

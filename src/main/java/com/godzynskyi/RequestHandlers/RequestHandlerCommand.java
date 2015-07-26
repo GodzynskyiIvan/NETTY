@@ -1,11 +1,11 @@
 package com.godzynskyi.RequestHandlers;
 
-import com.godzynskyi.ConnectionDTO;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 
 /**
- * Created by JavaDeveloper on 22.07.2015.
+ * Pattern command
+ * Return response by request uri
  */
 public interface RequestHandlerCommand {
-    public DefaultFullHttpResponse process(ConnectionDTO connection);
+    public DefaultFullHttpResponse process(String uri);
 }

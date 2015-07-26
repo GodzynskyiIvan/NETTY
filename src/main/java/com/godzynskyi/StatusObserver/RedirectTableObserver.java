@@ -6,44 +6,37 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by JavaDeveloper on 22.07.2015.
- */
 public class RedirectTableObserver {
     private static Map<String, Integer> redirectStatistics = new HashMap<String, Integer>();
 
-    public static synchronized void update(ConnectionDTO connection) {
+    public static void update(ConnectionDTO connection) {
         QueryStringDecoder decoder = new QueryStringDecoder(connection.getUri());
         if(decoder.path().toLowerCase().equals("/redirect")) {
             String url = decoder.parameters().get("url").get(0);
             int countOfThisRedirect = 0;
-            if (url!=null && redirectStatistics.containsKey(url)) {
-                countOfThisRedirect = redirectStatistics.get(url);
+            synchronized (redirectStatistics) {
+                if (url != null && redirectStatistics.containsKey(url)) {
+                    countOfThisRedirect = redirectStatistics.get(url);
+                }
+                redirectStatistics.put(url, ++countOfThisRedirect);
             }
-            redirectStatistics.put(url,++countOfThisRedirect);
         }
     }
 
-    public synchronized static String getTableWithHTMLTags() {
+    public synchronized static String getTable() {
         if(redirectStatistics.size()==0) return "";
         StringBuilder result = new StringBuilder();
-        result.append("<table border=\"1\" width=\"400\">"+
-                "<caption>Count of redirect queries by URL</caption>" +
-                "<thead>" +
-                "<tr>" +
-                "<th>URL</th>" +
-                "<th>Count of redirect queriies</th>" +
-                "</tr>" +
-                "</thead>" +
-                "<tbody>");
+        result.append("\nCOUNT OF REDIRECT QUERIES BY URL\n");
+        result.append("__________________________________________________\n");
+        result.append("Count of redirect queries\tURL\n");
+        result.append("__________________________________________________\n");
         for(Map.Entry<String, Integer> entry: redirectStatistics.entrySet()) {
-            result.append("<tr>" +
-                    "<td>"+entry.getKey()+"</td>" +
-                    "<td>"+entry.getValue()+"</td>" +
-                    "</tr>");
+            result.append("\t" + entry.getValue()+"\t\t\t");
+            result.append(entry.getKey()+"\t");
+            result.append("\n");
         }
-        result.append("</tbody>" +
-                "</table>");
+        result.append("__________________________________________________\n\n\n");
         return result.toString();
     }
+
 }

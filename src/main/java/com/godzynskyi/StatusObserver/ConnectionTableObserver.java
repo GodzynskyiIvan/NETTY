@@ -2,12 +2,6 @@ package com.godzynskyi.StatusObserver;
 
 import com.godzynskyi.ConnectionDTO;
 
-import java.util.List;
-import java.util.Map;
-
-/**
- * Created by JavaDeveloper on 22.07.2015.
- */
 public class ConnectionTableObserver {
     //Last 16 connections for connections Table
     private static FixedSizeStack<ConnectionDTO> connections = new FixedSizeStack<>(16);
@@ -16,33 +10,23 @@ public class ConnectionTableObserver {
         connections.add(connection);
     }
 
-    public synchronized static String getTableWithHTMLTags() {
+    public synchronized static String getTable() {
         StringBuilder result = new StringBuilder();
-        result.append("<table border=\"1\" width=\"800\">"+
-                "<caption>"+connections.getAll().size()+" last handled connection(s)</caption>" +
-                "<thead>" +
-                "<tr>" +
-                "<th>IP Address</th>" +
-                "<th>URI</th>" +
-                "<th>Time of query</th>" +
-                "<th>Sent bytes</th>" +
-                "<th>Received bytes</th>" +
-                "<th>Speed (bytes/sec)</th>" +
-                "</tr>" +
-                "</thead>" +
-                "<tbody>");
+        result.append("\n\n"+connections.getAll().size()+" LAST HANDLED CONNECTION(S)\n");
+        result.append("_________________________________________________________________________________________________________\n");
+        result.append("IP Address \t\tTime of query \t\t\tSent B \tRecieved B \tSpeed \t\tURI\n");
+        result.append("_________________________________________________________________________________________________________\n");
         for(ConnectionDTO entry: connections.getAll()) {
-            result.append("<tr>" +
-                    "<td>" + entry.getIp().toString() + "</td>" +
-                    "<td>" + entry.getUri() + "</td>" +
-                    "<td>" + entry.getStartedDate().toString() + "</td>" +
-                    "<td>" + entry.getRequestBytes()+"</td>" +
-                    "<td>" + entry.getResponseBytes() + "</td>" +
-                    "<td>" + entry.getSpeed()+"</td>" +
-                    "</tr>");
+            result.append(entry.getIp() + "\t");
+            result.append(entry.getStartedDate().toString() + "\t");
+            result.append(entry.getResponseBytes()+"\t");
+            result.append(entry.getRequestBytes() + "\t\t");
+            result.append(entry.getSpeed()+"\t");
+            result.append(entry.getUri() + "\t");
+            result.append("\n");
         }
-        result.append("</tbody>" +
-                "</table>");
+        result.append("_________________________________________________________________________________________________________\n");
         return result.toString();
     }
+
 }

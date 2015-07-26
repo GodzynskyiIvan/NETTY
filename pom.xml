@@ -14,7 +14,6 @@
             <artifactId>netty-all</artifactId>
             <version>5.0.0.Alpha2</version>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -25,9 +24,6 @@
                     <source>1.7</source>
                     <target>1.7</target>
                     <fork>true</fork>
-                    <!--<compilerArguments>-->
-                        <!--<bootclasspath>${1.8.0jdk}\lib\rt.jar</bootclasspath>-->
-                    <!--</compilerArguments>-->
                 </configuration>
             </plugin>
         </plugins>

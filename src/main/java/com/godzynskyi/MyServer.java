@@ -5,9 +5,10 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 
+/**
+ * Main class, start server
+ */
 public class MyServer {
 
     static final int PORT = Integer.parseInt(System.getProperty("port", "8888"));
@@ -20,8 +21,7 @@ public class MyServer {
             ServerBootstrap b = new ServerBootstrap()
                     .group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-//                    .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new MyServerInitializer());
+                    .childHandler(new ChannelPipelineInit());
 
             Channel ch = b.bind(PORT).sync().channel();
 

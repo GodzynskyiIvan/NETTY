@@ -6,7 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by JavaDeveloper on 22.07.2015.
+ * List with fixed size.
+ * Adds element in first position.
  */
 public class FixedSizeStack<E> {
 

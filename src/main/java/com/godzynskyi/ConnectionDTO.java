@@ -1,81 +1,75 @@
 package com.godzynskyi;
 
-import java.net.InetSocketAddress;
 import java.util.Date;
 
 /**
- * Created by JavaDeveloper on 22.07.2015.
+ * Info about completed connection
  */
 public class ConnectionDTO {
-    private long startedTime;
+    private long startTime;
     private long requestEndedTime;
-    private long responseTime;
-    private InetSocketAddress ip;
+    private long responseStartTime;
+    private long responseEndedTime;
+    private String ip;
     private String uri;
     private int requestBytes=0;
-    private int responseBytes;
+    private int responseBytes=0;
 
-    public ConnectionDTO() {
-        startedTime = System.currentTimeMillis();
-    }
-
-    public long getStartedTime() {
-        return startedTime;
+    public long getStartTime() {
+        return startTime;
     }
 
     public Date getStartedDate() {
-        return new Date(startedTime);
+        return new Date(startTime);
     }
 
-    public void setRequestEndedTime(long requestTime) {
+    public synchronized ConnectionDTO setRequestEndedTime(long requestTime) {
         this.requestEndedTime = requestTime;
+        return this;
     }
 
-    public long getResponseTime() {
-        return responseTime;
-    }
-
-    public void setResponseTime(long responseTime) {
-        this.responseTime = responseTime;
-    }
-
-    public InetSocketAddress getIp() {
+    public String getIp() {
         return ip;
     }
 
-    public void setIp(InetSocketAddress ip) {
+    public synchronized ConnectionDTO setIp(String ip) {
         this.ip = ip;
+        return this;
     }
 
     public String getUri() {
         return uri;
     }
 
-    public void setUri(String uri) {
+    public synchronized ConnectionDTO setUri(String uri) {
         this.uri = uri;
+        return this;
     }
 
     public int getRequestBytes() {
         return requestBytes;
     }
 
-    public void addRequestBytes(int requestBytes) {
+    public synchronized ConnectionDTO addRequestBytes(int requestBytes) {
         this.requestBytes += requestBytes;
+        return this;
     }
 
     public int getResponseBytes() {
         return responseBytes;
     }
 
-    public void setResponseBytes(int responseBytes) {
-        this.responseBytes = responseBytes;
+    public synchronized ConnectionDTO addResponseBytes(int responseBytes) {
+        this.responseBytes += responseBytes;
+        return this;
     }
 
-    public String getSpeed() {
-        long requestTime = requestEndedTime-startedTime;
+    public synchronized String getSpeed() {
+        long requestTime = requestEndedTime- startTime;
+        long responseTime = responseEndedTime - responseStartTime;
         long time = requestTime + responseTime;
-        if(time==0) return "time=>0";
-        double result = ((double)(requestBytes + responseBytes)) / ((double)(requestTime + responseTime)) * 1000;
+        if(time==0) time=1;
+        double result = ((double)(requestBytes + responseBytes)) / ((double)(time)) * 1000;
         return String.format("%.2f",result);
     }
 
@@ -83,11 +77,25 @@ public class ConnectionDTO {
     public String toString() {
         return "IP: " + ip.toString() + "\n" +
                 "URI: " + uri + "\n" +
-                "Started time: " + startedTime + "\n" +
-                "Request time: " +(requestEndedTime - startedTime) + "\n" +
+                "Started time: " + startTime + "\n" +
+                "Request time: " +(requestEndedTime - startTime) + "\n" +
                 "Request bytes" + requestBytes + "\n" +
-                "Response time" + responseTime + "\n" +
                 "Response bytes" + responseBytes + "\n";
      }
 
+    public synchronized ConnectionDTO setStartResponseTime(long l) {
+        if(responseStartTime!=0) return this;
+        responseStartTime = l;
+        return this;
+    }
+
+    public synchronized ConnectionDTO setResponseEndedTime(long l) {
+        responseEndedTime = l;
+        return this;
+    }
+
+    public synchronized ConnectionDTO setStartTime(long startTime) {
+        this.startTime = startTime;
+        return this;
+    }
 }

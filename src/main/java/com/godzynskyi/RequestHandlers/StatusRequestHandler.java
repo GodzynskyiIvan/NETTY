@@ -1,6 +1,5 @@
 package com.godzynskyi.RequestHandlers;
 
-import com.godzynskyi.ConnectionDTO;
 import com.godzynskyi.StatusObserver.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -13,30 +12,24 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
- * Created by JavaDeveloper on 22.07.2015.
+ * Return response to "/status" request
  */
 public class StatusRequestHandler implements RequestHandlerCommand {
     @Override
-    public DefaultFullHttpResponse process(ConnectionDTO connection) {
-//        System.out.println("CountOfRequestsObserver = " + CountOfRequestsObserver.getCount());
-//        System.out.println("CountOfUniqueRequestsObserver = " + CountOfUniqueRequestsObserver.getCount());
-//        System.out.println("IPTableObserver: " + IPTableObserver.getTable().toString());
-//        System.out.println("RedirectRequestHandler: " + RedirectTableObserver.getTable().toString());
-//        System.out.println("CountActiveChannels = " + CountActiveChannels.getCount());
-//        System.out.println("ConnectionTableObserver = " + ConnectionTableObserver.getTable());
+    public DefaultFullHttpResponse process(String uri) {
+
         StringBuilder content = new StringBuilder();
-        content.append("<HTML>" +
-                "<BODY>" +
-                "<h3>Count of Query: " + CountOfRequestsObserver.getCount() +"</h3>" +
-                "<h3>Count of Unique Query: "+CountOfUniqueRequestsObserver.getCount()+"</h3>");
-        content.append(IPTableObserver.getTableWithHTMLTags());
-        content.append("<br>");
-        content.append(RedirectTableObserver.getTableWithHTMLTags());
-        content.append("<h3>Count of opening connections: " + CountActiveChannels.getCount()+ "</h3>");
-        content.append(ConnectionTableObserver.getTableWithHTMLTags());
+        content.append("COUNT OF QUERIES: " + CountOfRequestsObserver.getCount() +"\n");
+        content.append("COUNT OF UNIQUE QUERIES: "+CountOfUniqueRequestsObserver.getCount()+"\n");
+        content.append(IPTableObserver.getTable());
+        content.append("\n");
+        content.append(RedirectTableObserver.getTable());
+        content.append("COUNT OF OPENING CONNECTIONS: " + CountActiveChannels.getCount()+ "\n");
+        content.append(ConnectionTableObserver.getTable());
+
         ByteBuf byteBuf = Unpooled.copiedBuffer(content, CharsetUtil.UTF_8);
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, byteBuf);
-        response.headers().set(CONTENT_TYPE, "text/html; charset=UTF-8");
+        response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
         HttpHeaderUtil.setContentLength(response, byteBuf.readableBytes());
         return response;
     }
