@@ -9,6 +9,7 @@ import io.netty.channel.*;
  * Gives information to observers used in "/status" request.
  * Count of connections, Count of requests, Tables etc.
  */
+
 public class StatisticHandler extends ChannelHandlerAdapter {
     private ThreadLocal<ConnectionDTO> connection = new ThreadLocal<>();
 
@@ -26,28 +27,28 @@ public class StatisticHandler extends ChannelHandlerAdapter {
         CountOfRequestsObserver.update();
 
         connection.set(new ConnectionDTO().setStartTime(System.currentTimeMillis()));
-//        connection.set(connection.get().setRequestEndedTime(System.currentTimeMillis()));
         connection.set(addRequestInfoToConnectionDto(ctx, (ByteBuf) msg, connection.get()));
 
         CountOfUniqueRequestsObserver.update(connection.get());
         IPTableObserver.update(connection.get());
         RedirectTableObserver.update(connection.get());
 
-        ctx.bind(ctx.channel().localAddress()).addListener(new ChannelFutureListener() {
+        ctx.channel().eventLoop().execute(new Runnable() {
             @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
+            public void run() {
                 connection.set(connection.get().setRequestEndedTime(System.currentTimeMillis()));
-                ctx.fireChannelRead(msg);
             }
         });
+
+        ctx.fireChannelRead(msg);
     }
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-
         connection.set(connection.get()
-                .addResponseBytes(((ByteBuf) msg).readableBytes())
-                .setStartResponseTime(System.currentTimeMillis()));
+                .setStartResponseTime(System.currentTimeMillis())
+                .addResponseBytes(((ByteBuf) msg).readableBytes()));
+
 
         ctx.write(msg,promise).addListener(new ChannelFutureListener() {
             @Override

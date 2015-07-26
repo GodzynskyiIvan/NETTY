@@ -1,0 +1,12 @@
+Comments about.
+
+after "ab -c 100 -n 10000 localhost:8888/status" I took result in file ab.jpg
+
+There are 9992 failed requests in it because first responses had the same length.
+When first requests begun, count of completed connections is null.
+Count of first requests was {1, 2, 3, 4, 5, 6, 7, 8 ...}.
+My server do 8 channels concurrently.
+9th response had statistic about completed connections, that's why length was other.
+
+"/status" shows only completed connections. There is no information about itself.
+That information will be in next "/status" request connection.

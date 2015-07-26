@@ -24,7 +24,7 @@ public class IPTableObserver {
 
     public synchronized static String getTable() {
         StringBuilder result = new StringBuilder();
-        result.append("\nCOUNT OF QUERIES FROM IP\n\n");
+        result.append("\nCOUNT OF QUERIES FROM IP\n");
         result.append("_____________________________________________________________________\n");
         result.append("IP Address\tCount of queries\tTime of last query\n");
         result.append("_____________________________________________________________________\n");
